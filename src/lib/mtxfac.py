@@ -32,6 +32,8 @@ def gd(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):
         
             U[i], V[j] = gd_update(R[i][j], U[i,:], V[j,:], alpha, lamb)
 
+        print step
+
     return U, V
 
 def sgd(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):

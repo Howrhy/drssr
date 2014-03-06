@@ -9,7 +9,7 @@ def load_grafo_social(R):
 
     social_graph = numpy.zeros((grafo_size, grafo_size))
 
-    social_network = numpy.loadtxt(open("../dataset/SOCIAL_NETWORK","rb"),delimiter=",")
+    social_network = numpy.loadtxt(open("../dataset/NY_SN","rb"),delimiter=",")
 
     for i in xrange(len(social_network)):
         
@@ -18,6 +18,9 @@ def load_grafo_social(R):
 
         x = R[user]
         y = R[friend]
+
+        # print 'User  : '+`user`+','+`x` 
+        # print 'Friend: '+`friend`+','+`y` 
 
         cor_pearson = util.pearson(x,y)
 
@@ -50,6 +53,9 @@ def gd_sr(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002, beta=0.001):
 
     SG = load_grafo_social(R)
 
+    # print 'SOCIAL GRAPH SIZE'
+    # print len(SG)
+
     for step in xrange(steps):
         
         for index in xrange(len(list_index)):
@@ -61,6 +67,8 @@ def gd_sr(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002, beta=0.001):
 
             U[i], V[j] = gd_update(R[i][j], U, i, V[j,:], SG, alpha, lamb, beta)
 
+        print step
+        
     return U, V    
 
 def sgd_sr(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002, beta=0.001):

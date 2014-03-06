@@ -24,17 +24,17 @@ if __name__ == "__main__":
     #      [1,0,2,5,0]
     #     ]
 
-    R = [
-         [5,4,0,1,1,0,0,5],
-         [0,5,3,0,1,1,0,4],
-         [0,5,5,0,0,2,1,0],
-         [0,1,1,3,5,4,0,1],
-         [0,1,0,4,4,0,1,1],
-         [1,1,0,5,5,0,0,0],
-         [1,0,1,5,0,4,5,0]
-        ]    
+    # R = [
+    #      [5,4,0,1,1,0,0,5],
+    #      [0,5,3,0,1,1,0,4],
+    #      [0,5,5,0,0,2,1,0],
+    #      [0,1,1,3,5,4,0,1],
+    #      [0,1,0,4,4,0,1,1],
+    #      [1,1,0,5,5,0,0,0],
+    #      [1,0,1,5,0,4,5,0]
+    #     ]    
 
-    # R = numpy.loadtxt(open("../dataset/NY_MATRIX","rb"),delimiter=",")
+    R = numpy.loadtxt(open("../dataset/NY_MATRIX","rb"),delimiter=",")
 
     R = numpy.array(R)
 
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     # itens
     N = len(R[0])
 
-    K = 2
+    K = 9
     U = numpy.random.rand(M,K)
     V = numpy.random.rand(N,K)
 
@@ -63,9 +63,9 @@ if __name__ == "__main__":
     steps = 1800000
     stratus_number = 3
 
-    nP0, nQ0 = mtxfac.gd(R, U0, V0, steps, alpha, lamb)
-    nR0 = numpy.dot(nP0, nQ0.T)
-    print util.rmse(nR0,R)
+    # nP0, nQ0 = mtxfac.gd(R, U0, V0, steps, alpha, lamb)
+    # nR0 = numpy.dot(nP0, nQ0.T)
+    # print util.rmse(nR0,R)
 
     # nP1, nQ1 = mtxfac.sgd(R, U1, V1, steps, alpha, lamb)
     # nR1 = numpy.dot(nP1, nQ1.T)
@@ -75,6 +75,8 @@ if __name__ == "__main__":
     # nR2 = numpy.dot(nP2, nQ2.T)
     # print util.rmse(nR2,R)
 
-    nP1, nQ1 = mtxfac_sr.gd_sr_new(R, U1, V1, steps, alpha, lamb, 0.01)
+    nP1, nQ1 = mtxfac_sr.gd_sr(R, U1, V1, steps, alpha, lamb, 0.01)
     nR1 = numpy.dot(nP1, nQ1.T)
     print util.rmse(nR1,R)
+
+    # print util.pearson([1,2],[1,2])

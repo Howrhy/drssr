@@ -26,7 +26,10 @@ def pearson(x, y):
 
     
     n = len(dense_X)
-    assert n > 0
+
+    if n == 0:
+        return 0
+
     avg_x = float(sum(dense_X)) / len(dense_X)
     avg_y = float(sum(dense_Y)) / len(dense_Y)
     diffprod = 0
