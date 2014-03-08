@@ -21,12 +21,14 @@ def gd_update(Rij, Ui, Vj, alpha, lamb):
 
 def gd(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):
 
-    list_index = load_matrix_index(R)
-
     percent = 0
     current_percent = 0
 
-    start_time = time.time()
+    # start_time = time.time()
+
+    list_index = load_matrix_index(R)
+
+  
 
     for step in xrange(steps):
         
@@ -41,15 +43,18 @@ def gd(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):
 
         current_percent = util.calc_progress(steps, step+1, current_percent)
 
-        # if(current_percent != percent):
-        #     print current_percent
-        #     percent = current_percent
+        if(current_percent != percent):
+            print current_percent
+            percent = current_percent
         #     print (time.time() - start_time)/60
         #     start_time = time.time()
 
     return U, V
 
 def sgd(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):
+
+    # percent = 0
+    # current_percent = 0
 
     list_index = load_matrix_index(R)
 
@@ -66,11 +71,18 @@ def sgd(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):
 
         U[i], V[j] = gd_update(R[i][j], U[i,:], V[j,:], alpha, lamb)
 
+        # current_percent = util.calc_progress(steps, step+1, current_percent)
+
+        # if(current_percent != percent):
+        #     print current_percent
+        #     percent = current_percent
+
     return U, V
 
-def dsgd(R, U, V, stratus_number, steps, alpha, lamb):
+def dsgd(R, U, V, stratus_number, T, steps, alpha, lamb):
 
-    T = 1000
+    percent = 0
+    current_percent = 0
 
     for step in xrange(T):
 
@@ -97,5 +109,11 @@ def dsgd(R, U, V, stratus_number, steps, alpha, lamb):
 
             for i in xrange(len(temp_V)):
                 V[index_V+i] = temp_V[i]
+
+        current_percent = util.calc_progress(T, step+1, current_percent)
+
+        if(current_percent != percent):
+            print current_percent
+            percent = current_percent
 
     return U, V
