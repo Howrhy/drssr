@@ -56,7 +56,50 @@ def calc_progress(total, current_step, current_percent):
 
     percent = current_step*100/total
 
-    # if percent != current_percent: #and percent % 5 == 0:
-    return percent
-    # else:
-    #     return current_percent
+    if percent != current_percent: #and percent % 5 == 0:
+        return percent
+    else:
+        return current_percent
+
+def generate_U_V(M,N,K):
+
+    U = numpy.random.rand(M,K)
+    V = numpy.random.rand(N,K)
+
+    f_U = open('../dataset/U', 'w')
+
+    for i in xrange(len(U)):
+
+        line = ''
+
+        for j in xrange(len(U[0])):
+
+            line += `U[i][j]`
+
+            if j+1 < len(U[0]):
+                line += ','
+            else:
+                line += '\n'
+
+        f_U.write(line)
+
+    f_U.close()
+
+    f_V = open('../dataset/V', 'w')
+
+    for i in xrange(len(V)):
+
+        line = ''
+
+        for j in xrange(len(V[0])):
+
+            line += `V[i][j]`
+
+            if j+1 < len(V[0]):
+                line += ','
+            else:
+                line += '\n'
+
+        f_V.write(line)
+
+    f_V.close()

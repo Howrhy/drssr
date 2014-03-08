@@ -9,7 +9,7 @@ def load_grafo_social(R):
 
     social_graph = numpy.zeros((grafo_size, grafo_size))
 
-    social_network = numpy.loadtxt(open("../dataset/NY_SN","rb"),delimiter=",")
+    social_network = numpy.loadtxt(open("../dataset/SN_TEST","rb"),delimiter=",")
 
     for i in xrange(len(social_network)):
         
@@ -53,9 +53,6 @@ def gd_sr(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002, beta=0.001):
 
     SG = load_grafo_social(R)
 
-    # print 'SOCIAL GRAPH SIZE'
-    # print len(SG)
-
     for step in xrange(steps):
         
         for index in xrange(len(list_index)):
@@ -66,8 +63,6 @@ def gd_sr(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002, beta=0.001):
             j = int(sJ)
 
             U[i], V[j] = gd_update(R[i][j], U, i, V[j,:], SG, alpha, lamb, beta)
-
-        print step
         
     return U, V    
 
