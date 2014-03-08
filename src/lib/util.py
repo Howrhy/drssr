@@ -49,3 +49,14 @@ def pearson(x, y):
 
     # return (sim+1)/2
     return sim
+
+def calc_progress(total, current_step, current_percent):
+
+    # percent = int(current_step*100/total)
+
+    percent = current_step*100/total
+
+    # if percent != current_percent: #and percent % 5 == 0:
+    return percent
+    # else:
+    #     return current_percent
