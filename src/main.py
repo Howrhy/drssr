@@ -5,7 +5,7 @@ from lib import util
 
 import numpy
 import time
-import pylab
+# import pylab
 
 def exp_1():
 
