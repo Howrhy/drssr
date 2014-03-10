@@ -65,6 +65,7 @@ def split_matrix(R, U, V, block_size, step):
     splited_U = []
     splited_V = []
 
+    index_pointer_r = []
     index_pointer_c = []
 
     for k in xrange(block_size):
@@ -74,6 +75,7 @@ def split_matrix(R, U, V, block_size, step):
         pointer_r = int(pointer_r)
         pointer_c = int(pointer_c)
 
+        index_pointer_r.append(pointer_r)
         index_pointer_c.append(pointer_c)
         
         if(M>=N):
@@ -114,4 +116,4 @@ def split_matrix(R, U, V, block_size, step):
 
         list_stratus.append(stratus)
 
-    return list_stratus, splited_U, splited_V, index_pointer_c
+    return list_stratus, splited_U, splited_V, index_pointer_r, index_pointer_c

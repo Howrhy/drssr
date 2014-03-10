@@ -1,19 +1,15 @@
-dsgd : 0.37731333159282826
-time : 18.023385083675386
+Number of users: 647
+Number of items: 23145
 
+Min user rating: 31
+Max user rating: 292
+AVG user rating: 49
 
-gd   : 0.39719999629402902
-time : 2.652992848555247
-sgd  : 0.38922989004413255
-time : 3.1385726809501646
+Min item rating: 1
+Max item rating: 64
+AVG item rating: 1
 
-*******************************
-
-gd   : 0.39719999629402902
-time : 2.5657081484794615
-sgd  : 0.38934337674357444
-time : 3.0689859986305237
-dsgd2x2 : 0.37916395514473761
-time : 18.512441567579906
-dsgd3x3 : 0.33778346808987114
-time : 16.048335599899293
+Min friends: 0
+Max friends: 458
+AVG friends: 18
+Total SIM: 346
