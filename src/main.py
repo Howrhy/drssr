@@ -186,61 +186,44 @@ def exp_2():
     f_result.write('time : '+`time_exp4`+'\n')
     f_result.close()
 
-def exp_3(steps):
+def exp_3(R, U, V, steps):
 
-    R = numpy.loadtxt(open("../dataset/NY_MATRIX","rb"),delimiter=",")
+    alpha = 0.0002
+    lamb  = 0.001
 
-    R = numpy.array(R)
-
-    # users
-    M = len(R)
-
-    # itens
-    N = len(R[0])
-
-    K = 9
-
-    # util.generate_U_V(M,N,K)
-
-    U = numpy.loadtxt(open("../dataset/U","rb"),delimiter=",")
-    V = numpy.loadtxt(open("../dataset/V","rb"),delimiter=",")
+    print '*******************  GD  *******************'
 
     U1 = numpy.copy(U);
     V1 = numpy.copy(V);
 
+    start_time = time.time()
+
+    nP1, nQ1, cost_f0 = mtxfac.gd(R, U1, V1, steps, alpha, lamb)
+    nR1 = numpy.dot(nP1, nQ1.T)
+    exp1 = util.rmse(nR1,R)
+
+    time_exp1 = (time.time() - start_time)/60
+
+    print '*******************  GD SR  *******************'
+
     U2 = numpy.copy(U);
     V2 = numpy.copy(V);
-
-    alpha = 0.0002
-    lamb  = 0.001
-    # steps = 500
-
-    # print '###############  GD  ###############'
-
-    # start_time = time.time()
-
-    # nP1, nQ1, cost_f0 = mtxfac.gd(R, U1, V1, steps, alpha, lamb)
-    # nR1 = numpy.dot(nP1, nQ1.T)
-    # exp1 = util.rmse(nR1,R)
-
-    # time_exp1 = (time.time() - start_time)/60
-
-    # print '#############  GD SR  ############'
     
-    # start_time = time.time()
+    start_time = time.time()
 
-    # nP2, nQ2 = dgd_sr.gd_default(R, U2, V2, steps, alpha, lamb, 0.001)
-    # nR2 = numpy.dot(nP2, nQ2.T)
-    # exp2 = util.rmse(nR2,R)
+    nP2, nQ2 = dgd_sr.gd_default(R, U2, V2, steps, alpha, lamb, 0.001)
+    nR2 = numpy.dot(nP2, nQ2.T)
+    exp2 = util.rmse(nR2,R)
 
-    # time_exp2 = (time.time() - start_time)/60
+    time_exp2 = (time.time() - start_time)/60
+
+    '******************* RESULT *******************'
 
     f_result = open('../dataset/result_gd_sr_'+`steps`, 'w')
-    f_result.write('test')
-    # f_result.write('GD    : '+`exp1`+'\n')
-    # f_result.write('time  : '+`time_exp1`+'\n')
-    # f_result.write('GD SR : '+`exp2`+'\n')
-    # f_result.write('time  : '+`time_exp2`+'\n')
+    f_result.write('GD    : '+`exp1`+'\n')
+    f_result.write('time  : '+`time_exp1`+'\n')
+    f_result.write('GD SR : '+`exp2`+'\n')
+    f_result.write('time  : '+`time_exp2`+'\n')
     f_result.close()
 
 def exp_4():
@@ -369,13 +352,20 @@ def exp_5():
 
 if __name__ == "__main__":
 
+    R = numpy.loadtxt(open("../dataset/NY_MATRIX","rb"),delimiter=",")
+
+    R = numpy.array(R)
+
+    U = numpy.loadtxt(open("../dataset/U","rb"),delimiter=",")
+    V = numpy.loadtxt(open("../dataset/V","rb"),delimiter=",")
+
     # exp_1()
 
     # exp_2()
 
     steps = 100
     for i in xrange(10):
-        exp_3(steps)
+        exp_3(R, U, V, steps)
         steps += 100
 
     # exp_4()
