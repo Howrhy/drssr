@@ -5,13 +5,12 @@ from lib import mtxfac
 from lib import util
 from lib import stratus
 
-def load_grafo_social(R):
+def load_grafo_social(R, SN_FILE):
     grafo_size = len(R)
 
     social_graph = numpy.zeros((grafo_size, grafo_size))
 
-    # social_network = numpy.loadtxt(open("../dataset/SN_TEST","rb"),delimiter=",")
-    social_network = numpy.loadtxt(open("../dataset/SN_TEST","rb"),delimiter=",")
+    social_network = numpy.loadtxt(open(SN_FILE,"rb"),delimiter=",")
 
     for i in xrange(len(social_network)):
         
@@ -38,24 +37,18 @@ def sr_f(i, P, SG):
             reg += SG[i][f] * (P[i] - P[f])
 
     return reg
+    
 
-def gd_update(Rij, U, index_U, Vj, SG, alpha, lamb, beta):
-    Ui = U[index_U,:]
-    e = numpy.dot(Ui.T,Vj) - Rij
-    u_temp = Ui - alpha * ( (e * Vj) + (lamb * Ui) + beta*sr_f(index_U,U,SG) )
-    v_temp = Vj - alpha * ( (e * Ui) + (lamb * Vj) )
-    return u_temp, v_temp
-
-def gd(R, U, V, steps, alpha, lamb, beta):
+def gd_default(R, U, V, SN_FILE, steps, alpha, lamb, beta):
 
     percent = 0
     current_percent = 0
 
+    SG = load_grafo_social(R, SN_FILE)
+
     list_index = mtxfac.load_matrix_index(R)
 
     len_list_index = len(list_index)
-
-    SG = load_grafo_social(R)
 
     for step in xrange(steps):
         
@@ -66,36 +59,43 @@ def gd(R, U, V, steps, alpha, lamb, beta):
             i = int(sI)
             j = int(sJ)
 
-            U[i], V[j] = gd_update(R[i][j], U, i, V[j,:], SG, alpha, lamb, beta)
+            e = numpy.dot(U[i].T,V[j]) - R[i][j]
+            u_temp = U[i] - alpha * ( (e * V[j]) + (lamb * U[i]) + beta*sr_f(i,U,SG) )
+            V[j]   = V[j] - alpha * ( (e * U[i]) + (lamb * V[j]) )
+            U[i]   = u_temp
 
-        # current_percent = util.calc_progress(steps, step+1, current_percent)
+        current_percent = util.calc_progress(steps, step+1, current_percent)
 
-        # if(current_percent != percent):
-        #     print current_percent
-        #     percent = current_percent
+        if(current_percent != percent):
+            print current_percent
+            percent = current_percent
         
-    return U, V    
+    return U, V
 
-def sgd(R, U, V, SG, steps=1800000, alpha=0.0001, lamb=0.002, beta=0.001):
+def gd_distributed(R, U, V, steps, alpha, lamb, beta, SG, FULL_U, REAL_INDEX):
 
     list_index = mtxfac.load_matrix_index(R)
 
     len_list_index = len(list_index)
 
     for step in xrange(steps):
+        
+        for index in xrange(len(list_index)):
 
-        index = randint(0,len_list_index-1)
+            sI,sJ =  list_index[index].split(',')
 
-        sI,sJ =  list_index[index].split(',')
+            i = int(sI)
+            j = int(sJ)
 
-        i = int(sI)
-        j = int(sJ)
+            e = numpy.dot(U[i].T,V[j]) - R[i][j]
+            u_temp = U[i] - alpha * ( (e * V[j]) + (lamb * U[i]) + beta*sr_f(REAL_INDEX + i, FULL_U, SG) )
+            V[j]   = V[j] - alpha * ( (e * U[i]) + (lamb * V[j]) )
+            U[i]   = u_temp
+        
+    return U, V    
 
-        U[i], V[j] = gd_update(R[i][j], U, i, V[j,:], SG, alpha, lamb, beta)
 
-    return U, V
-
-def dsgd(R, U, V, stratus_number, T, steps, alpha, lamb):
+def dgd(R, U, V, stratus_number, T, steps, alpha, lamb, beta):
 
     percent = 0
     current_percent = 0
@@ -104,11 +104,11 @@ def dsgd(R, U, V, stratus_number, T, steps, alpha, lamb):
 
     for step in xrange(T):
 
-        list_stratus, list_U, list_V, index_pointer_c = stratus.split_matrix(R, U, V, stratus_number, step)
+        list_stratus, list_U, list_V, index_pointer_r, index_pointer_c = stratus.split_matrix(R, U, V, stratus_number, step)
 
         for i in xrange(stratus_number):
 
-            list_U[i],list_V[i] = sgd(list_stratus[i], list_U[i], list_V[i], SG, steps, alpha, lamb)
+            list_U[i],list_V[i] = gd_distributed(list_stratus[i], list_U[i], list_V[i], steps, alpha, lamb, beta, SG, U, index_pointer_r[i])
 
         index_U=0
         for index_array in xrange(stratus_number):

@@ -21,7 +21,6 @@ def gd_update(Rij, Ui, Vj, alpha, lamb):
     v_temp = Vj - alpha * ( (e * Ui) + (lamb * Vj) )
 
     cost = e ** 2
-    # print 'variance: '+`abs(u_temp-Ui)`
 
     return u_temp, v_temp, cost
 
@@ -31,8 +30,6 @@ def gd(R, U, V, steps, alpha, lamb):
     current_percent = 0
 
     cost_f = []
-
-    # start_time = time.time()
 
     list_index = load_matrix_index(R)
 
@@ -53,13 +50,11 @@ def gd(R, U, V, steps, alpha, lamb):
 
         cost_f.append(cost_sum)
 
-        current_percent = util.calc_progress(steps, step+1, current_percent)
+        # current_percent = util.calc_progress(steps, step+1, current_percent)
 
-        if(current_percent != percent):
-            print current_percent
-            percent = current_percent
-        #     print (time.time() - start_time)/60
-        #     start_time = time.time()
+        # if(current_percent != percent):
+        #     print current_percent
+        #     percent = current_percent
 
     return U, V, cost_f
 
@@ -68,13 +63,9 @@ def sgd(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):
     # percent = 0
     # current_percent = 0
 
-    cost_f = []
-
     list_index = load_matrix_index(R)
 
     len_list_index = len(list_index)
-
-    cost_sum = 0
 
     for step in xrange(steps):
 
@@ -87,23 +78,6 @@ def sgd(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):
 
         U[i], V[j], cost = gd_update(R[i][j], U[i,:], V[j,:], alpha, lamb)
 
-        cost_sum = 0
-
-        if step % 25 == 0:
-
-            for index1 in xrange(len(list_index)):
-
-                sI1,sJ1 =  list_index[index1].split(',')
-
-                i1 = int(sI1)
-                j1 = int(sJ1)
-
-                e = numpy.dot(U[i1,:], V[j1,:]) - R[i1][j1]
-
-                cost_sum += e ** 2
-
-            cost_f.append(cost_sum)
-
         # current_percent = util.calc_progress(steps, step+1, current_percent)
 
         # if(current_percent != percent):
@@ -112,68 +86,6 @@ def sgd(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):
 
     return U, V, cost_f
 
-def sgd1(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):
-
-    cost_f = []
-
-    list_index = load_matrix_index(R)
-
-    z = extract_train(list_index)
-
-    loop = 0
-
-    for step in xrange(steps):
-
-        z = extract_train(list_index)
-
-        cost_sum = 0
-
-        for index in xrange(len(z)):
-
-            loop += 1
-
-            sI,sJ =  z[index].split(',')
-
-            i = int(sI)
-            j = int(sJ)
-        
-            U[i], V[j], cost = gd_update(R[i][j], U[i,:], V[j,:], alpha, lamb)
-
-            cost_sum += cost
-
-        cost_f.append(cost_sum)
-
-    print loop
-
-    return U, V, cost_f
-
-def sgd2(R, U, V, steps=1800000, alpha=0.0001, lamb=0.002):
-
-
-    cost_f = []
-
-    list_index = load_matrix_index(R)
-
-    z = numpy.random.permutation(list_index)
-
-    for step in xrange(steps):
-        
-        cost_sum = 0
-
-        for index in xrange(len(z)):
-
-            sI,sJ =  z[index].split(',')
-
-            i = int(sI)
-            j = int(sJ)
-        
-            U[i], V[j], cost = gd_update(R[i][j], U[i,:], V[j,:], alpha, lamb)
-
-            cost_sum += cost
-
-        cost_f.append(cost_sum)
-
-    return U, V, cost_f
 
 def dsgd(R, U, V, stratus_number, T, steps, alpha, lamb):
 
@@ -247,38 +159,8 @@ def dgd(R, U, V, stratus_number, T, steps, alpha, lamb):
 
         current_percent = util.calc_progress(T, step+1, current_percent)
 
-        # if(current_percent != percent):
-        #     print current_percent
-        #     percent = current_percent
+        if(current_percent != percent):
+            print current_percent
+            percent = current_percent
 
     return U, V
-
-def extract_train(L):
-
-    L_len = len(L)
-    L_half = L_len / 2
-    
-    ini = randint(0,L_half)
-    fin = randint(L_half+1,L_len)
-
-    return L[ini:fin]
-
-    # print L
-
-    # train = []
-    # train_index = []
-
-    # train_len = randint(0,len(L))
-
-    # for i in xrange(train_len):
-
-    #     j = randint(0,len(L)-1)
-
-    #     if j not in train_index:
-
-    #         train_index.append(j)
-    #         train.append(L[i])
-
-    # return train
-
-

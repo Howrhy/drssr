@@ -11,7 +11,7 @@ from lib import util
 #         [1,0,0,5,0]
 #     ]
 
-R = numpy.loadtxt(open("/home/arthur/projects/mestrado/bigdata/foursquare/NY_MATRIX","rb"),delimiter=",")
+R = numpy.loadtxt(open("/home/arthur/projects/mestrado/bigdata/foursquare/IL_MATRIX","rb"),delimiter=",")
 
 print 'Number of users: '+`len(R)`
 print 'Number of items: '+`len(R[0])`
@@ -76,7 +76,7 @@ grafo_size = len(R)
 
 SG = numpy.zeros((grafo_size, grafo_size))
 
-social_network = numpy.loadtxt(open("/home/arthur/projects/mestrado/bigdata/foursquare/NY_SN","rb"),delimiter=",")
+social_network = numpy.loadtxt(open("/home/arthur/projects/mestrado/bigdata/foursquare/IL_SN","rb"),delimiter=",")
 
 for i in xrange(len(social_network)):
     

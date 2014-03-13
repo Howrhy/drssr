@@ -1,6 +1,5 @@
 from lib import mtxfac
 from lib import mtxfac_sr
-from lib import dgd_sr
 from lib import util
 
 import numpy
@@ -65,27 +64,25 @@ def exp_1():
 
     nP0, nQ0, cost_f0 = mtxfac.gd(R, U0, V0, steps, alpha, lamb)
     nR0 = numpy.dot(nP0, nQ0.T)
-    exp1 = util.rmse(nR0,R)
+    exp0 = util.rmse(nR0,R)
 
-    time_exp1 = (time.time() - start_time)/60
+    time_exp0 = (time.time() - start_time)/60
 
-    # print exp1
-
-    # print time_exp1
+    print exp0
+    print time_exp0
 
     print '#############  GD SR  ############'
 
     start_time = time.time()
 
-    nP1, nQ1 = mtxfac_sr.gd(R, U1, V1, steps, alpha, lamb, 0.001, 0, 0.001)
-    # nP1, nQ1, cost_f1= mtxfac.sgd(R, U1, V1, steps * 25, alpha, lamb)
+    nP1, nQ1 = mtxfac_sr.gd_default(R, U1, V1, steps, alpha, lamb, 0.001)
     nR1 = numpy.dot(nP1, nQ1.T)
-    exp2 = util.rmse(nR1,R)
+    exp1 = util.rmse(nR1,R)
 
     time_exp2 = (time.time() - start_time)/60
 
     print exp1
-    print exp2
+    print time_exp1
 
     # pylab.plot(range(len(cost_f0)), cost_f0)
     # pylab.plot(range(len(cost_f1)), cost_f1)
@@ -94,60 +91,55 @@ def exp_1():
     
     # print time_exp2
 
-def exp_2():
+def exp_2(matrix_file, U_file, V_file, SN_file):
 
-    R = numpy.loadtxt(open("../dataset/NY_MATRIX","rb"),delimiter=",")
+    R = numpy.loadtxt(open(matrix_file,"rb"),delimiter=",")
 
     R = numpy.array(R)
 
-    # users
-    M = len(R)
-
-    # itens
-    N = len(R[0])
-
-    K = 9
-
-    U = numpy.loadtxt(open("../dataset/U","rb"),delimiter=",")
-    V = numpy.loadtxt(open("../dataset/V","rb"),delimiter=",")
-
-    U0 = numpy.copy(U);
-    V0 = numpy.copy(V);
-
-    U1 = numpy.copy(U);
-    V1 = numpy.copy(V);
-
-    U2 = numpy.copy(U);
-    V2 = numpy.copy(V);
-
-    U3 = numpy.copy(U); 
-    V3 = numpy.copy(V);
+    U = numpy.loadtxt(open(U_file,"rb"),delimiter=",")
+    V = numpy.loadtxt(open(V_file,"rb"),delimiter=",")
 
     alpha = 0.0002
     lamb  = 0.001
     steps = 1000
     
-    print '###############  GD  ###############'
+    print '******************  GD  ******************'
+
+    U0 = numpy.copy(U);
+    V0 = numpy.copy(V);
 
     start_time = time.time()
 
     nP0, nQ0 = mtxfac.gd(R, U0, V0, steps, alpha, lamb)
     nR0 = numpy.dot(nP0, nQ0.T)
-    exp1 = util.rmse(nR0,R)
+    exp0 = util.rmse(nR0,R)
 
-    time_exp1 = (time.time() - start_time)/60
+    time_exp0 = (time.time() - start_time)/60
 
-    print '##############  SGD  ##############'
+    print 'RMSE: '+`exp0`
+    print 'TIME: '+`time_exp0`
+
+    print '*****************  SGD  *****************'
+
+    U1 = numpy.copy(U);
+    V1 = numpy.copy(V);
 
     start_time = time.time()
 
-    nP1, nQ1 = mtxfac.sgd(R, U1, V1, 15000000, alpha, lamb)
+    nP1, nQ1 = mtxfac.sgd(R, U1, V1, steps, alpha, lamb)
     nR1 = numpy.dot(nP1, nQ1.T)
-    exp2 = util.rmse(nR1,R)
+    exp1 = util.rmse(nR1,R)
 
-    time_exp2 = (time.time() - start_time)/60
+    time_exp1 = (time.time() - start_time)/60
 
-    print '###########  DSGD  2x2  ###########'
+    print 'RMSE: '+`exp1`
+    print 'TIME: '+`time_exp1`
+
+    print '***************  DGD  2x2  **************'
+
+    U2 = numpy.copy(U);
+    V2 = numpy.copy(V);
     
     T = 1000
     steps_dsgd = 10000
@@ -157,11 +149,17 @@ def exp_2():
 
     nP2, nQ2 = mtxfac.dsgd(R, U2, V2, stratus_number, T, steps_dsgd, alpha, lamb)
     nR2 = numpy.dot(nP2, nQ2.T)
-    exp3 = util.rmse(nR2,R)
+    exp2 = util.rmse(nR2,R)
 
-    time_exp3 = (time.time() - start_time)/60
+    time_exp2 = (time.time() - start_time)/60
 
-    print '###########  DSGD  3x3  ###########'
+    print 'RMSE: '+`exp3`
+    print 'TIME: '+`time_exp3`
+
+    print '***************  DGD  3x3  **************'
+
+    U3 = numpy.copy(U); 
+    V3 = numpy.copy(V);
     
     T = 1000
     steps_dsgd = 10000
@@ -171,25 +169,36 @@ def exp_2():
 
     nP3, nQ3 = mtxfac.dsgd(R, U3, V3, stratus_number, T, steps_dsgd, alpha, lamb)
     nR3 = numpy.dot(nP3, nQ3.T)
-    exp4 = util.rmse(nR3,R)
+    exp3 = util.rmse(nR3,R)
 
-    time_exp4 = (time.time() - start_time)/60
+    time_exp3 = (time.time() - start_time)/60
+
+    print 'RMSE: '+`exp4`
+    print 'TIME: '+`time_exp4`
+
+    '******************** REPORT *******************'
 
     f_result = open('../dataset/result', 'w')
+    
     f_result.write('gd   : '+`exp1`+'\n')
     f_result.write('time : '+`time_exp1`+'\n')
+    
     f_result.write('sgd  : '+`exp2`+'\n')
     f_result.write('time : '+`time_exp2`+'\n')
+    
     f_result.write('dsgd2x2 : '+`exp3`+'\n')
     f_result.write('time : '+`time_exp3`+'\n')
+    
     f_result.write('dsgd3x3 : '+`exp4`+'\n')
     f_result.write('time : '+`time_exp4`+'\n')
+    
     f_result.close()
 
-def exp_3(R, U, V, steps):
+def exp_3(exp_name, R, U, V, SN_FILE, steps):
 
     alpha = 0.0002
     lamb  = 0.001
+    beta  = 0.001
 
     print '*******************  GD  *******************'
 
@@ -211,7 +220,7 @@ def exp_3(R, U, V, steps):
     
     start_time = time.time()
 
-    nP2, nQ2 = dgd_sr.gd_default(R, U2, V2, steps, alpha, lamb, 0.001)
+    nP2, nQ2 = mtxfac_sr.gd_default(R, U2, V2, SN_FILE, steps, alpha, lamb, beta)
     nR2 = numpy.dot(nP2, nQ2.T)
     exp2 = util.rmse(nR2,R)
 
@@ -219,70 +228,61 @@ def exp_3(R, U, V, steps):
 
     '******************* RESULT *******************'
 
-    f_result = open('../dataset/result_gd_sr_'+`steps`, 'w')
+    f_result = open('../exp_results/result_gd_x_gdsr_'+exp_name, 'w')
+    
+    f_result.write('Steps : '+`steps`+'\n')
+    f_result.write('Alpha : '+`alpha`+'\n')
+    f_result.write('Lambda: '+`lamb`+'\n')
+    f_result.write('Beta  : '+`beta`+'\n')
+
     f_result.write('GD    : '+`exp1`+'\n')
     f_result.write('time  : '+`time_exp1`+'\n')
+    
     f_result.write('GD SR : '+`exp2`+'\n')
     f_result.write('time  : '+`time_exp2`+'\n')
+    
     f_result.close()
 
-def exp_4():
-
-    R = numpy.loadtxt(open("../dataset/NY_MATRIX","rb"),delimiter=",")
-
-    R = numpy.array(R)
-
-    # users
-    M = len(R)
-
-    # itens
-    N = len(R[0])
-
-    K = 9
-
-    U = numpy.loadtxt(open("../dataset/U","rb"),delimiter=",")
-    V = numpy.loadtxt(open("../dataset/V","rb"),delimiter=",")
-
-    U1 = numpy.copy(U);
-    V1 = numpy.copy(V);
-
-    U2 = numpy.copy(U);
-    V2 = numpy.copy(V);
+def exp_4(R, U, V):
 
     alpha = 0.0002
     lamb  = 0.001
 
+    T = 6
+    steps_dsgd = 80
+    stratus_number = 2
+
     print '###########  DSGD 2x2  ###########'
+
+    U1 = numpy.copy(U);
+    V1 = numpy.copy(V);
     
-    # T = 1000
-    # steps_dsgd = 10000
-    # stratus_number = 2
+    start_time = time.time()
 
-    # start_time = time.time()
+    nP1, nQ1 = mtxfac.dgd(R, U1, V1, stratus_number, T, steps_dsgd, alpha, lamb)
+    nR1 = numpy.dot(nP1, nQ1.T)
+    exp1 = util.rmse(nR1,R)
 
-    # nP1, nQ1 = mtxfac.dsgd(R, U1, V1, stratus_number, T, steps_dsgd, alpha, lamb)
-    # nR1 = numpy.dot(nP1, nQ1.T)
-    # exp1 = util.rmse(nR1,R)
+    time_exp1 = (time.time() - start_time)/60
 
-    # time_exp1 = (time.time() - start_time)/60
+    print exp1
 
     print '#########  DSGD 2x2 SR ##########'
     
-    T = 1000
-    steps_dsgd = 10000
-    stratus_number = 2
+    U2 = numpy.copy(U);
+    V2 = numpy.copy(V);
 
     start_time = time.time()
 
-    nP2, nQ2 = mtxfac_sr.dsgd(R, U2, V2, stratus_number, T, steps_dsgd, alpha, lamb)
+    nP2, nQ2 = dgd_sr.dgd(R, U2, V2, stratus_number, T, steps_dsgd, alpha, lamb, 0.001)
     nR2 = numpy.dot(nP2, nQ2.T)
     exp2 = util.rmse(nR2,R)
 
     time_exp2 = (time.time() - start_time)/60
 
-    f_result = open('../dataset/result_dsgd_sr', 'w')
-    # f_result.write('dsgd2x2    : '+`exp1`+'\n')
-    # f_result.write('time       : '+`time_exp1`+'\n')
+    f_result = open('../dataset/result_dgd_sr', 'w')
+    f_result.write('dsgd2x2    : '+`exp1`+'\n')
+    f_result.write('time       : '+`time_exp1`+'\n')
     f_result.write('dsgd2x2 sr : '+`exp2`+'\n')
     f_result.write('time       : '+`time_exp2`+'\n')
     f_result.close()
@@ -352,23 +352,39 @@ def exp_5():
 
 if __name__ == "__main__":
 
-    R = numpy.loadtxt(open("../dataset/NY_MATRIX","rb"),delimiter=",")
-
-    R = numpy.array(R)
-
-    U = numpy.loadtxt(open("../dataset/U","rb"),delimiter=",")
-    V = numpy.loadtxt(open("../dataset/V","rb"),delimiter=",")
+    # util.generate_U_V(len(R),len(R[0]),9, 'CA_U', 'CA_V')
 
     # exp_1()
 
     # exp_2()
 
-    steps = 100
-    for i in xrange(10):
-        exp_3(R, U, V, steps)
-        steps += 100
+    '************************ EXP GD x GDRS ***************************'
 
-    # exp_4()
+    R = numpy.loadtxt(open("../dataset/NY_MATRIX","rb"),delimiter=",")
+    R = numpy.array(R)
+    U = numpy.loadtxt(open("../dataset/NY_U","rb"),delimiter=",")
+    V = numpy.loadtxt(open("../dataset/NY_V","rb"),delimiter=",")
+    SN_FILE = '../dataset/NY_SN'
+
+    exp_3('NY', R, U, V, SN_FILE, 300)
+
+    R = numpy.loadtxt(open("../dataset/IL_MATRIX","rb"),delimiter=",")
+    R = numpy.array(R)
+    U = numpy.loadtxt(open("../dataset/IL_U","rb"),delimiter=",")
+    V = numpy.loadtxt(open("../dataset/IL_V","rb"),delimiter=",")
+    SN_FILE = '../dataset/IL_SN'
+
+    exp_3('IL', R, U, V, SN_FILE, 300)
+
+    R = numpy.loadtxt(open("../dataset/CA_MATRIX","rb"),delimiter=",")
+    R = numpy.array(R)
+    U = numpy.loadtxt(open("../dataset/CA_U","rb"),delimiter=",")
+    V = numpy.loadtxt(open("../dataset/CA_V","rb"),delimiter=",")
+    SN_FILE = '../dataset/CA_SN'
+
+    exp_3('CA', R, U, V, SN_FILE, 300)
+
+    # exp_4(R, U, V )
 
     # for i in xrange(10):
     #     print 'Exp - '+`i`

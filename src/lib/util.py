@@ -52,8 +52,6 @@ def pearson(x, y):
 
 def calc_progress(total, current_step, current_percent):
 
-    # percent = int(current_step*100/total)
-
     percent = current_step*100/total
 
     if percent != current_percent: #and percent % 5 == 0:
@@ -61,12 +59,12 @@ def calc_progress(total, current_step, current_percent):
     else:
         return current_percent
 
-def generate_U_V(M,N,K):
+def generate_U_V(M,N,K, u_file, v_file):
 
     U = numpy.random.rand(M,K)
     V = numpy.random.rand(N,K)
 
-    f_U = open('../dataset/U', 'w')
+    f_U = open('../dataset/'+u_file, 'w')
 
     for i in xrange(len(U)):
 
@@ -85,7 +83,7 @@ def generate_U_V(M,N,K):
 
     f_U.close()
 
-    f_V = open('../dataset/V', 'w')
+    f_V = open('../dataset/'+v_file, 'w')
 
     for i in xrange(len(V)):
 
